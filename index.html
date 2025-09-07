@@ -97,10 +97,26 @@ const MAP = {
 };
 
 const INTERP = {
-  RED:{label:"🔴 Czerwony",sub:"(dominacja, kontrola, działanie)",text:"Silne, zdecydowane osoby..."},
-  BLUE:{label:"🔵 Niebieski",sub:"(empatia, emocje, relacje)",text:"Relacyjni, lojalni, empatyczni..."},
-  WHITE:{label:"⚪ Biały",sub:"(spokój, tolerancja, harmonia)",text:"Spokojni, cierpliwi mediatorzy..."},
-  YELLOW:{label:"🟡 Żółty",sub:"(spontaniczność, energia, kreatywność)",text:"Towarzyscy, kreatywni, optymistyczni..."}
+  RED:{
+    label:"🔴 Czerwony",
+    sub:"(dominacja, kontrola, działanie)",
+    text:"Osoby nastawione na działanie, skoncentrowane na celach i skuteczności. Cenią niezależność, podejmują szybkie decyzje i lubią mieć kontrolę nad sytuacją."
+  },
+  BLUE:{
+    label:"🔵 Niebieski",
+    sub:"(empatia, emocje, relacje)",
+    text:"Osoby kierujące się emocjami, ceniące relacje i głębokie więzi. Są empatyczne, lojalne i dbają o harmonię w otoczeniu."
+  },
+  WHITE:{
+    label:"⚪ Biały",
+    sub:"(spokój, tolerancja, harmonia)",
+    text:"Osoby spokojne, wyważone, unikające konfliktów i szukające harmonii. Są cierpliwe, intuicyjne i dobrze sprawdzają się jako mediatorzy."
+  },
+  YELLOW:{
+    label:"🟡 Żółty",
+    sub:"(spontaniczność, energia, kreatywność)",
+    text:"Osoby optymistyczne, pełne energii, kreatywne i otwarte na nowe doświadczenia. Uwielbiają spontaniczność i cenią swobodę działania."
+  }
 };
 
 function renderQuestions() {
@@ -145,6 +161,10 @@ function updateUI() {
   for (let key of ["RED","BLUE","WHITE","YELLOW"]) {
     interpDiv.innerHTML+=`<div><h3>${INTERP[key].label} <span>${INTERP[key].sub}</span></h3><p>${INTERP[key].text}</p></div>`;
   }
+  const general = document.createElement("p");
+general.className = "general-note";
+general.textContent = "Każdy z tych typów osobowości tworzy unikalny profil, który wpływa na sposób działania i komunikowania się z innymi. Większość osób nie pasuje wyłącznie do jednego koloru – często łączymy cechy różnych typów, co sprawia, że potrafimy dostosować się do różnych sytuacji i ludzi.";
+interpDiv.appendChild(general);
 }
 
 document.addEventListener("change",updateUI);
