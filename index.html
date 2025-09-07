@@ -7,7 +7,148 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Test kolorów – Hartman</h1>
-  <p>To będzie Twoja strona z testem. Kod CSS i logika wczytają się ze style.css.</p>
+<header class="container">
+  <h1>Test kolorów <span>(koncepcja Hartmana)</span></h1>
+  <p class="subtitle">Wypełnij 48 krótkich stwierdzeń (1–5). Wynik i interpretacja pojawią się od razu.</p>
+</header>
+
+<main class="container">
+  <form id="testForm"></form>
+
+  <section id="results" class="card results">
+    <h2>Wynik</h2>
+    <div class="scores">
+      <div class="score" data-color="RED"><div class="bar"><span></span></div><div class="label">🔴 Czerwony</div><div class="val">0</div></div>
+      <div class="score" data-color="BLUE"><div class="bar"><span></span></div><div class="label">🔵 Niebieski</div><div class="val">0</div></div>
+      <div class="score" data-color="WHITE"><div class="bar"><span></span></div><div class="label">⚪ Biały</div><div class="val">0</div></div>
+      <div class="score" data-color="YELLOW"><div class="bar"><span></span></div><div class="label">🟡 Żółty</div><div class="val">0</div></div>
+    </div>
+    <p><strong>Dominujący kolor:</strong> <span id="dominant">–</span></p>
+    <p class="note" id="tieNote"></p>
+  </section>
+
+  <section class="card">
+    <h2>Interpretacja</h2>
+    <div id="interpretations"></div>
+  </section>
+</main>
+
+<footer class="container footnote">
+  <p>Materiał edukacyjny. Użycie komercyjne wymaga zgody autorki materiału źródłowego.</p>
+</footer>
+
+<script>
+const QUESTIONS = [
+"Lubię działać spontanicznie i nie przepadam za rutyną.",
+"Zawsze staram się rozumieć emocje i potrzeby innych ludzi.",
+"Nie lubię, gdy ktoś narzuca mi swoje zdanie.",
+"Cenię sobie szczerość i autentyczność w relacjach międzyludzkich.",
+"W stresujących sytuacjach staram się zachować spokój.",
+"Uwielbiam towarzystwo i czerpię energię z kontaktów z innymi ludźmi.",
+"Wolę pracować samodzielnie, bo ufam swoim umiejętnościom bardziej niż innym.",
+"Często analizuję swoje emocje i uczucia.",
+"Nie lubię podejmować szybkich decyzji – wolę przemyśleć wszystkie opcje.",
+"Gdy coś idzie nie po mojej myśli, próbuję kontrolować sytuację.",
+"Mam duże poczucie humoru i lubię rozbawiać innych.",
+"Ludzie często przychodzą do mnie po wsparcie emocjonalne.",
+"Często przejmuję inicjatywę w grupie.",
+"Rutyna mnie męczy – potrzebuję zmian i nowości.",
+"Bardziej liczy się dla mnie dobro grupy niż osobiste ambicje.",
+"Wolę słuchać niż mówić i nie przepadam za byciem w centrum uwagi.",
+"Mam tysiąc pomysłów na minutę, ale nie zawsze je realizuję.",
+"W sytuacjach konfliktowych wolę konfrontację niż unikanie problemu.",
+"Gdy ktoś mnie zrani, długo to przeżywam.",
+"Często robię rzeczy pod wpływem impulsu.",
+"Nie lubię narzucać swojego zdania innym.",
+"Szybko się nudzę i szukam nowych wrażeń.",
+"Wolę unikać problemów niż angażować się w ich rozwiązywanie.",
+"Lubię być w centrum uwagi i czuć się doceniany.",
+"Jestem osobą stanowczą i nie boję się wyrażać swojego zdania.",
+"Ważniejsze są dla mnie dobre relacje niż osiąganie sukcesów.",
+"Nie przejmuję się drobnymi niepowodzeniami – ważne, by iść do przodu.",
+"Stawiam na efektywność i wyniki, a nie na emocje.",
+"Mam silny charakter i nie poddaję się łatwo.",
+"Często godzę się na różne rzeczy, by uniknąć konfliktu.",
+"Staram się unikać sytuacji, które mogłyby kogoś zranić.",
+"Rywalizacja mnie motywuje – lubię wygrywać.",
+"Wolę pracować w tle, niż być na pierwszym planie.",
+"Wierzę, że życie powinno być przede wszystkim dobrą zabawą.",
+"Czasami przejmuję się rzeczami, na które nie mam wpływu.",
+"Cenię sobie stabilizację i przewidywalność.",
+"Kiedy ktoś mnie krytykuje, próbuję zrozumieć jego punkt widzenia.",
+"Gdy coś nie idzie po mojej myśli, reaguję spontanicznie, często zmieniając strategię.",
+"Mam naturalne predyspozycje do przywództwa i kierowania zespołem.",
+"Jestem osobą lojalną i przywiązuję dużą wagę do bliskich relacji.",
+"Nie lubię sztywnych zasad – wolę elastyczne podejście do życia.",
+"Kiedy podejmuję decyzję, staram się dokładnie rozważyć wszystkie możliwe konsekwencje.",
+"Lubię, gdy życie jest pełne niespodzianek i nowych doświadczeń.",
+"Gdy przyjaciel ma problem, staram się go wysłuchać i wesprzeć.",
+"Wolę działać szybko, niż analizować każdą możliwość.",
+"Często dostrzegam rzeczy, które innym umykają.",
+"Mam duże poczucie własnej wartości i pewność siebie.",
+"Staram się, by każdy w moim otoczeniu czuł się komfortowo i akceptowany."
+];
+
+const MAP = {
+  RED:[3,7,10,13,18,25,28,29,32,39,45,47],
+  BLUE:[2,4,8,12,15,19,26,31,35,40,44,48],
+  WHITE:[5,9,16,21,23,30,33,36,37,41,42,46],
+  YELLOW:[1,6,11,14,17,20,22,24,27,34,38,43]
+};
+
+const INTERP = {
+  RED:{label:"🔴 Czerwony",sub:"(dominacja, kontrola, działanie)",text:"Silne, zdecydowane osoby..."},
+  BLUE:{label:"🔵 Niebieski",sub:"(empatia, emocje, relacje)",text:"Relacyjni, lojalni, empatyczni..."},
+  WHITE:{label:"⚪ Biały",sub:"(spokój, tolerancja, harmonia)",text:"Spokojni, cierpliwi mediatorzy..."},
+  YELLOW:{label:"🟡 Żółty",sub:"(spontaniczność, energia, kreatywność)",text:"Towarzyscy, kreatywni, optymistyczni..."}
+};
+
+function renderQuestions() {
+  const form = document.getElementById("testForm");
+  QUESTIONS.forEach((q,i)=>{
+    const sec=document.createElement("section");
+    sec.className="card q";
+    sec.innerHTML=`<div><strong>${i+1}.</strong> ${q}</div>
+      <div class="q-scale">${[1,2,3,4,5].map(v=>
+        `<label><input type="radio" name="q${i+1}" value="${v}">${v}</label>`
+      ).join("")}</div>`;
+    form.appendChild(sec);
+  });
+}
+
+function calcScores() {
+  const data=new FormData(document.getElementById("testForm"));
+  const scores={RED:0,BLUE:0,WHITE:0,YELLOW:0};
+  for (let [name,val] of data.entries()) {
+    const q=parseInt(name.replace("q",""));
+    const v=parseInt(val);
+    for (let color of Object.keys(MAP)) {
+      if (MAP[color].includes(q)) scores[color]+=v;
+    }
+  }
+  return scores;
+}
+
+function updateUI() {
+  const scores=calcScores();
+  const max=Math.max(...Object.values(scores));
+  document.querySelectorAll(".score").forEach(el=>{
+    const color=el.dataset.color;
+    el.querySelector(".val").textContent=scores[color];
+    el.querySelector(".bar span").style.width=(scores[color]/60*100)+"%";
+  });
+  const top=Object.entries(scores).filter(([c,v])=>v===max).map(([c])=>INTERP[c].label);
+  document.getElementById("dominant").textContent=top.join(" + ");
+  document.getElementById("tieNote").textContent=top.length>1?"Masz mieszankę kilku dominujących kolorów.":"";
+  const interpDiv=document.getElementById("interpretations");
+  interpDiv.innerHTML="";
+  for (let key of ["RED","BLUE","WHITE","YELLOW"]) {
+    interpDiv.innerHTML+=`<div><h3>${INTERP[key].label} <span>${INTERP[key].sub}</span></h3><p>${INTERP[key].text}</p></div>`;
+  }
+}
+
+document.addEventListener("change",updateUI);
+renderQuestions();
+</script>
 </body>
 </html>
